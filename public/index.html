@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anton & Dimitra Hochzeit</title>
+
+    <!-- Schriften -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Hintergrund -->
+    <div class="background"></div>
+
+    <!-- Header -->
+    <header>
+
+        <h1>Anton & Dimitra</h1>
+
+        <p class="subtitle">
+            Danke, dass ihr diesen besonderen Tag mit uns teilt ❤️
+        </p>
+
+        <div class="counterBox">
+            📸 <span id="counter">0</span> Fotos online
+        </div>
+
+    </header>
+
+    <!-- Upload -->
+    <section class="uploadCard">
+
+        <input
+            type="file"
+            id="fileInput"
+            multiple
+            accept="image/*,video/*"
+            hidden
+        >
+
+        <button id="selectButton">
+            📸 Fotos & Videos auswählen
+        </button>
+
+        <div id="selectedInfo">
+            Keine Dateien ausgewählt
+        </div>
+
+        <button id="uploadButton">
+            ⬆️ Hier Hochladen
+        </button>
+
+    </section>
+
+    <!-- Galerie -->
+    <section>
+
+        <h2>
+            Unsere Erinnerungen ❤️
+        </h2>
+
+        <div id="gallery"></div>
+
+    </section>
+
+    <!-- Fullscreen Viewer -->
+    <div id="viewer">
+
+        <button id="closeViewer">
+            ✕
+        </button>
+
+        <button id="prevButton">
+            ◀
+        </button>
+
+        <div id="viewerContent"></div>
+
+        <button id="nextButton">
+            ▶
+        </button>
+
+    </div>
+
+    <!-- Slideshow Button -->
+    <div class="slideshowContainer">
+
+        <button id="slideshowButton">
+            🎞️ Slideshow starten
+        </button>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+
+        ❤️ Anton & Dimitra
+
+    </footer>
+
+    <!-- Socket.IO -->
+    <script src="/socket.io/socket.io.js"></script>
+
+    <!-- Script -->
+    <script src="script.js"></script>
+
+</body>
+</html>
