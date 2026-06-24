@@ -1,114 +1,111 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anton & Dimitra Hochzeit</title>
 
-    <!-- Schriften -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Anton & Dimitra Hochzeit</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+
 </head>
+
 <body>
 
-    <!-- Hintergrund -->
-    <div class="background"></div>
+<header>
 
-    <!-- Header -->
-    <header>
+<div class="topBar">
 
-        <h1>Anton & Dimitra</h1>
+<h1>
+Anton & Dimitra
+</h1>
 
-        <p class="subtitle">
-            Danke, dass ihr diesen besonderen Tag mit uns teilt ❤️
-        </p>
+<button id="adminButton">
+Foto Management
+</button>
 
-        <div class="counterBox">
-            📸 <span id="counter">0</span> Fotos online
-        </div>
+</div>
 
-    </header>
+<div class="counterBox">
+📸 <span id="photoCount">0</span> Medien online
+</div>
 
-    <!-- Upload -->
-    <section class="uploadCard">
+<p class="subtitle">
+Danke, dass ihr diesen besonderen Tag mit uns teilt ❤️
+</p>
 
-        <input
-            type="file"
-            id="fileInput"
-            multiple
-            accept="image/*,video/*"
-            hidden
-        >
+</header>
 
-        <button id="selectButton">
-            📸 Fotos & Videos auswählen
-        </button>
+<section class="uploadCard">
 
-        <div id="selectedInfo">
-            Keine Dateien ausgewählt
-        </div>
+<input
+type="file"
+id="fileInput"
+multiple
+accept="image/*,video/*"
+hidden>
 
-        <button id="uploadButton">
-            ⬆️ Hier Hochladen
-        </button>
+<button id="selectButton">
+📸 Fotos & Videos auswählen
+</button>
 
-    </section>
+<div id="selectedInfo">
+Keine Dateien ausgewählt
+</div>
 
-    <!-- Galerie -->
-    <section>
+<button id="uploadButton">
+⬆ Hochladen
+</button>
 
-        <h2>
-            Unsere Erinnerungen ❤️
-        </h2>
+<div id="uploadStatus"></div>
 
-        <div id="gallery"></div>
+<progress
+id="uploadProgress"
+value="0"
+max="100">
+</progress>
 
-    </section>
+</section>
 
-    <!-- Fullscreen Viewer -->
-    <div id="viewer">
+<section>
 
-        <button id="closeViewer">
-            ✕
-        </button>
+<h2>
+Unsere Erinnerungen ❤️
+</h2>
 
-        <button id="prevButton">
-            ◀
-        </button>
+<div id="gallery"></div>
 
-        <div id="viewerContent"></div>
+</section>
 
-        <button id="nextButton">
-            ▶
-        </button>
+<div id="viewer">
 
-    </div>
+<button id="closeViewer">
+✕
+</button>
 
-    <!-- Slideshow Button -->
-    <div class="slideshowContainer">
+<button id="prevButton">
+◀
+</button>
 
-        <button id="slideshowButton">
-            🎞️ Slideshow starten
-        </button>
+<div id="viewerContent"></div>
 
-    </div>
+<button id="nextButton">
+▶
+</button>
 
-    <!-- Footer -->
-    <footer>
+</div>
 
-        ❤️ Anton & Dimitra
+<script src="/socket.io/socket.io.js"></script>
 
-    </footer>
-
-    <!-- Socket.IO -->
-    <script src="/socket.io/socket.io.js"></script>
-
-    <!-- Script -->
-    <script src="script.js"></script>
+<script src="script.js"></script>
 
 </body>
 </html>

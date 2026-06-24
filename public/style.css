@@ -1,196 +1,274 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
 }
 
-body {
-    font-family: "Montserrat", sans-serif;
-    background: #f7f1e8;
-    color: #3b2f2a;
-    overflow-x: hidden;
+body{
+font-family:"Montserrat",sans-serif;
+background:#f7f1e8;
+color:#3b2f2a;
+overflow-x:hidden;
 }
 
-/* 🌟 Hintergrund Glow */
-.background {
-    position: fixed;
-    inset: 0;
-    background: radial-gradient(circle at top, rgba(212,175,55,0.25), transparent 60%),
-                radial-gradient(circle at bottom, rgba(176,141,87,0.15), transparent 60%);
-    z-index: -1;
+header{
+position:sticky;
+top:0;
+z-index:1000;
+background:rgba(247,241,232,.95);
+backdrop-filter:blur(12px);
+padding:20px 15px;
+border-bottom:1px solid rgba(212,175,55,.3);
 }
 
-/* 💍 Header */
-header {
-    text-align: center;
-    padding: 30px 15px 10px;
+.topBar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:15px;
 }
 
-h1 {
-    font-family: "Playfair Display", serif;
-    font-size: 34px;
-    color: #b08d57;
-    text-shadow: 0 0 15px rgba(212,175,55,0.25);
+h1{
+font-family:"Playfair Display",serif;
+color:#b08d57;
+font-size:32px;
 }
 
-.subtitle {
-    font-size: 14px;
-    margin-top: 6px;
-    color: #6b5b53;
+.subtitle{
+margin-top:10px;
+font-size:14px;
+color:#6b5b53;
 }
 
-/* 📸 Counter */
-.counterBox {
-    margin-top: 12px;
-    display: inline-block;
-    padding: 8px 14px;
-    border-radius: 20px;
-    background: rgba(255,255,255,0.7);
-    border: 1px solid rgba(212,175,55,0.4);
-    font-weight: 500;
+.counterBox{
+margin-top:12px;
+padding:10px 15px;
+display:inline-block;
+background:white;
+border-radius:12px;
+box-shadow:0 4px 12px rgba(0,0,0,.08);
+font-weight:600;
+color:#b08d57;
 }
 
-/* 📤 Upload Card */
-.uploadCard {
-    margin: 20px auto;
-    width: 92%;
-    max-width: 420px;
-    background: rgba(255,255,255,0.75);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(212,175,55,0.4);
-    border-radius: 18px;
-    padding: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+#adminButton{
+border:none;
+padding:12px 18px;
+border-radius:12px;
+background:linear-gradient(135deg,#d4af37,#b08d57);
+color:white;
+cursor:pointer;
+font-weight:600;
 }
 
-/* Buttons */
-button {
-    width: 100%;
-    padding: 14px;
-    border-radius: 12px;
-    border: none;
-    cursor: pointer;
-    font-size: 15px;
-    margin-top: 10px;
-    transition: 0.2s;
+.uploadCard{
+width:95%;
+max-width:500px;
+margin:25px auto;
+padding:20px;
+background:white;
+border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,.08);
 }
 
-#selectButton {
-    background: linear-gradient(135deg, #fff, #f7f1e8);
-    border: 1px solid #d4af37;
-    color: #b08d57;
-    font-weight: 600;
+button{
+width:100%;
+padding:15px;
+border:none;
+border-radius:14px;
+cursor:pointer;
+font-size:15px;
+margin-top:10px;
 }
 
-#uploadButton {
-    background: linear-gradient(135deg, #d4af37, #b08d57);
-    color: white;
-    font-weight: 600;
-    box-shadow: 0 8px 20px rgba(212,175,55,0.25);
+#selectButton{
+background:white;
+border:1px solid #d4af37;
+color:#b08d57;
 }
 
-button:active {
-    transform: scale(0.98);
+#uploadButton{
+background:linear-gradient(135deg,#d4af37,#b08d57);
+color:white;
+font-weight:600;
 }
 
-/* Datei Info */
-#selectedInfo {
-    margin-top: 8px;
-    font-size: 12px;
-    color: #6b5b53;
+#selectedInfo,
+#uploadStatus{
+margin-top:10px;
+font-size:13px;
+color:#6b5b53;
+text-align:center;
 }
 
-/* 📸 Galerie */
-#gallery {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 6px;
-    padding: 10px;
+#uploadProgress{
+width:100%;
+margin-top:10px;
+display:none;
+height:10px;
+}
+
+h2{
+text-align:center;
+margin-bottom:15px;
+color:#b08d57;
+}
+
+#gallery{
+display:grid;
+gap:8px;
+padding:10px;
 }
 
 #gallery img,
-#gallery video {
-    width: 100%;
-    height: 160px;
-    object-fit: cover;
-    border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-    cursor: pointer;
-    transition: 0.2s;
+#gallery video{
+width:100%;
+height:180px;
+object-fit:cover;
+border-radius:14px;
+cursor:pointer;
+box-shadow:0 8px 20px rgba(0,0,0,.1);
+content-visibility:auto;
 }
 
-#gallery img:hover,
-#gallery video:hover {
-    transform: scale(1.03);
-}
-
-/* 🖥️ Viewer */
-#viewer {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.92);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    z-index: 999;
+#viewer{
+position:fixed;
+inset:0;
+display:none;
+justify-content:center;
+align-items:center;
+background:rgba(0,0,0,.95);
+z-index:9999;
 }
 
 #viewerContent img,
-#viewerContent video {
-    max-width: 92%;
-    max-height: 80vh;
-    border-radius: 12px;
+#viewerContent video{
+max-width:95%;
+max-height:85vh;
+border-radius:15px;
 }
 
-/* Viewer Buttons */
 #closeViewer,
 #prevButton,
-#nextButton {
-    position: absolute;
-    background: rgba(255,255,255,0.15);
-    color: white;
-    border: none;
-    padding: 10px 14px;
-    border-radius: 10px;
-    font-size: 18px;
-    width: auto;
+#nextButton{
+position:absolute;
+width:auto;
+padding:12px 16px;
+background:rgba(255,255,255,.15);
+color:white;
 }
 
-#closeViewer {
-    top: 15px;
-    right: 15px;
+#closeViewer{
+top:20px;
+right:20px;
 }
 
-#prevButton {
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
+#prevButton{
+left:20px;
+top:50%;
+transform:translateY(-50%);
 }
 
-#nextButton {
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
+#nextButton{
+right:20px;
+top:50%;
+transform:translateY(-50%);
 }
 
-/* 🎞️ Slideshow */
-.slideshowContainer {
-    text-align: center;
-    margin: 20px 0;
+#adminOverlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.9);
+z-index:20000;
+display:none;
+justify-content:center;
+align-items:center;
+padding:15px;
 }
 
-#slideshowButton {
-    width: 92%;
-    max-width: 420px;
-    background: linear-gradient(135deg, #111, #333);
-    color: white;
+#adminBox{
+width:100%;
+max-width:1000px;
+max-height:90vh;
+overflow-y:auto;
+background:#f7f1e8;
+border-radius:20px;
+padding:20px;
+position:relative;
+box-shadow:0 20px 50px rgba(0,0,0,.3);
 }
 
-/* Footer */
-footer {
-    text-align: center;
-    padding: 30px 0;
-    font-size: 12px;
-    color: #8a7b73;
+#closeAdmin{
+position:absolute;
+top:15px;
+right:15px;
+width:auto;
+background:#111;
+color:white;
+padding:10px 14px;
+}
+
+#adminGrid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+gap:12px;
+margin-top:20px;
+}
+
+.adminItem img,
+.adminItem video{
+width:100%;
+height:140px;
+object-fit:cover;
+border-radius:12px;
+cursor:pointer;
+transition:.2s;
+border:3px solid transparent;
+}
+
+.adminItem img:hover,
+.adminItem video:hover,
+.adminItem img:active,
+.adminItem video:active{
+transform:scale(1.03);
+border-color:#d4af37;
+}
+
+/* Handy */
+@media(max-width:767px){
+#gallery{
+grid-template-columns:1fr;
+}
+
+.topBar{
+flex-direction:column;
+}
+
+h1{
+font-size:26px;
+}
+
+#gallery img,
+#gallery video{
+height:220px;
+}
+}
+
+/* Tablet */
+@media(min-width:768px) and (max-width:1023px){
+#gallery{
+grid-template-columns:repeat(2,1fr);
+}
+}
+
+/* PC */
+@media(min-width:1024px){
+#gallery{
+grid-template-columns:repeat(4,1fr);
+}
+
+body{
+max-width:1600px;
+margin:auto;
+}
 }

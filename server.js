@@ -6,142 +6,81 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+const ADMIN_PASSWORD = "1234";
 
-// Upload-Ordner erstellen
-if (!fs.existsSync("./uploads")) {
-    fs.mkdirSync("./uploads");
-}
+const MAX_FILES_PER_5_MIN = 50;
+const MAX_FILE_SIZE_MB = 100;
 
-// Static Dateien
+app.use(express.json());
 app.use(express.static("public"));
 app.use("/uploads", express.static("uploads"));
 
-// Upload Speicher
+if (!fs.existsSync("./uploads")) fs.mkdirSync("./uploads");
+
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
+    destination(req, file, cb) {
         cb(null, "uploads/");
     },
-    filename: function (req, file, cb) {
-        const uniqueName = Date.now() + path.extname(file.originalname);
-        cb(null, uniqueName);
+    filename(req, file, cb) {
+        const safeExt = path.extname(file.originalname).toLowerCase();
+        cb(null, Date.now() + "-" + Math.round(Math.random() * 1e9) + safeExt);
     }
 });
 
-const upload = multer({ storage });
+const upload = multer({
+    storage,
+    limits: {
+        files: MAX_FILES_PER_5_MIN,
+        fileSize: MAX_FILE_SIZE_MB * 1024 * 1024
+    }
+});
 
-// Spam-Schutz
 const uploadLimits = {};
 
-// Startseite
+function getIp(req) {
+    return req.headers["x-forwarded-for"] || req.socket.remoteAddress || "unknown";
+}
+
+function getFileType(file) {
+    const ext = path.extname(file).toLowerCase();
+    return [".mp4", ".mov", ".webm"].includes(ext) ? "video" : "image";
+}
+
+function getFilesSorted() {
+    if (!fs.existsSync("./uploads")) return [];
+
+    return fs.readdirSync("./uploads")
+        .map(file => {
+            const stat = fs.statSync("./uploads/" + file);
+
+            return {
+                name: file,
+                time: stat.mtimeMs,
+                url: "/uploads/" + file,
+                type: getFileType(file)
+            };
+        })
+        .sort((a, b) => b.time - a.time);
+}
+
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// Alle Dateien abrufen
 app.get("/files", (req, res) => {
-
-    fs.readdir("./uploads", (err, files) => {
-
-        if (err) {
-            return res.json([]);
-        }
-
-        // Neueste zuerst
-        files.sort((a, b) => {
-            return fs.statSync("./uploads/" + b).mtimeMs -
-                   fs.statSync("./uploads/" + a).mtimeMs;
-        });
-
-        const result = files.map(file => {
-
-            const ext = path.extname(file).toLowerCase();
-
-            return {
-                url: "/uploads/" + file,
-                type: (
-                    ext === ".mp4" ||
-                    ext === ".mov" ||
-                    ext === ".webm"
-                ) ? "video" : "image"
-            };
-
-        });
-
-        res.json(result);
-
-    });
-
+    res.json(getFilesSorted());
 });
 
-// Bildanzahl
-app.get("/count", (req, res) => {
+app.post("/upload", upload.any(), (req, res) => {
 
-    fs.readdir("./uploads", (err, files) => {
+    console.log("FILES:", req.files);
 
-        if (err) {
-            return res.json({
-                count: 0
-            });
-        }
-
-        res.json({
-            count: files.length
+    if (!req.files || req.files.length === 0) {
+        return res.status(400).json({
+            error: "Keine Datei angekommen"
         });
-
-    });
-
-});
-
-// Upload
-app.post("/upload", upload.single("file"), (req, res) => {
-
-    const ip =
-        req.headers["x-forwarded-for"] ||
-        req.socket.remoteAddress;
-
-    const now = Date.now();
-
-    if (!uploadLimits[ip]) {
-
-        uploadLimits[ip] = {
-            count: 0,
-            start: now
-        };
-
     }
-
-    const user = uploadLimits[ip];
-
-    // Reset nach 5 Minuten
-    if (now - user.start > 5 * 60 * 1000) {
-
-        user.start = now;
-        user.count = 0;
-
-    }
-
-    // Limit 50 Dateien
-    if (user.count >= 50) {
-
-        return res.status(429).json({
-            error: "Maximal 50 Uploads alle 5 Minuten."
-        });
-
-    }
-
-    user.count++;
-
-    const ext = path.extname(req.file.filename).toLowerCase();
-
-    io.emit("new-file", {
-        url: "/uploads/" + req.file.filename,
-        type: (
-            ext === ".mp4" ||
-            ext === ".mov" ||
-            ext === ".webm"
-        ) ? "video" : "image"
-    });
 
     res.json({
         success: true
@@ -149,19 +88,35 @@ app.post("/upload", upload.single("file"), (req, res) => {
 
 });
 
-// Socket
-io.on("connection", () => {
+app.post("/admin/login", (req, res) => {
+    if (req.body.password === ADMIN_PASSWORD) {
+        return res.json({ success: true });
+    }
 
-    console.log("📱 Gast verbunden");
-
+    res.status(401).json({ success: false });
 });
 
-// Server starten
-http.listen(PORT, () => {
+app.post("/delete", (req, res) => {
+    const { password, file } = req.body;
 
-    console.log("");
-    console.log("💍 Anton & Dimitra Hochzeit läuft");
-    console.log("🌐 http://localhost:3000");
-    console.log("");
+    if (password !== ADMIN_PASSWORD) {
+        return res.status(401).json({ success: false });
+    }
 
+    const filePath = "./uploads/" + file;
+
+    if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+        io.emit("file-deleted", file);
+    }
+
+    res.json({ success: true });
+});
+
+io.on("connection", () => {
+    console.log("Gast verbunden");
+});
+
+http.listen(PORT, "0.0.0.0", () => {
+    console.log("💍 Anton & Dimitra Hochzeit läuft auf Port " + PORT);
 });
