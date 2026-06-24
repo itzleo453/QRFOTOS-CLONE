@@ -1,110 +1,60 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Hochzeit von Anton & Dimitra</title>
+<title>Anton & Dimitra Hochzeit</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
-
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="style.css">
-
 </head>
 
 <body>
 
 <header>
+    <div class="topBar">
+        <h1>Anton & Dimitra</h1>
+        <button id="adminButton">Foto Management</button>
+    </div>
 
-<div class="topBar">
+    <div class="counterBox">
+        📸 <span id="photoCount">0</span> Medien online
+    </div>
 
-<h1>
-Anton & Dimitra
-</h1>
-
-<button id="adminButton">
-Foto Managment
-</button>
-
-</div>
-
-<div class="counterBox">
-📸 <span id="photoCount">0</span> Medien online
-</div>
-
-<p class="subtitle">
-Danke, dass ihr diesen besonderen Tag mit uns teilt ❤️
-</p>
-
+    <p class="subtitle">Danke, dass ihr diesen besonderen Tag mit uns teilt ❤️</p>
 </header>
 
 <section class="uploadCard">
+    <input type="file" id="fileInput" multiple accept="image/*,video/*" hidden>
 
-<input
-type="file"
-id="fileInput"
-multiple
-accept="image/*,video/*"
-hidden>
+    <button id="selectButton">📸 Fotos & Videos auswählen</button>
 
-<button id="selectButton">
-📸 Fotos & Videos auswählen
-</button>
+    <div id="selectedInfo">Keine Dateien ausgewählt</div>
 
-<div id="selectedInfo">
-Keine Dateien ausgewählt
-</div>
+    <button id="uploadButton">⬆ Hochladen</button>
 
-<button id="uploadButton">
-Hier drücken zum Hochladen
-</button>
+    <div id="uploadStatus"></div>
+    <progress id="uploadProgress" value="0" max="100"></progress>
 
-<div id="uploadStatus"></div>
-
-<progress
-id="uploadProgress"
-value="0"
-max="100">
-</progress>
-
+    <div id="ownDeleteBox"></div>
 </section>
 
 <section>
-
-<h2>
-Unsere Erinnerungen ❤️
-</h2>
-
-<div id="gallery"></div>
-
+    <h2>Unsere Erinnerungen ❤️</h2>
+    <div id="gallery"></div>
 </section>
 
 <div id="viewer">
-
-<button id="closeViewer">
-✕
-</button>
-
-<button id="prevButton">
-◀
-</button>
-
-<div id="viewerContent"></div>
-
-<button id="nextButton">
-▶
-</button>
-
+    <button id="closeViewer">✕</button>
+    <button id="prevButton">◀</button>
+    <div id="viewerContent"></div>
+    <button id="nextButton">▶</button>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
-
 <script src="script.js"></script>
 
 </body>
