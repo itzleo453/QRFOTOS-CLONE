@@ -34,6 +34,7 @@ function createMediaElement(item, index) {
     if (item.type === "video") {
         el.muted = true;
         el.preload = "metadata";
+        el.playsInline = true;
     }
 
     el.onclick = () => openViewer(index);
@@ -169,6 +170,7 @@ function openAdminGallery() {
         if (item.type === "video") {
             el.muted = true;
             el.preload = "metadata";
+            el.playsInline = true;
         }
 
         wrap.appendChild(el);
@@ -203,6 +205,110 @@ socket.on("files-added", newFiles => {
 socket.on("file-deleted", fileName => {
     items = items.filter(item => item.name !== fileName);
     renderGallery();
+});
+
+/* =========================
+   VIEWER
+========================= */
+
+function openViewer(index) {
+    currentIndex = index;
+    renderViewer();
+    viewer.style.display = "flex";
+}
+
+function renderViewer() {
+
+    const item = items[currentIndex];
+
+    if (!item) return;
+
+    viewerContent.innerHTML = "";
+
+    if (item.type === "video") {
+
+        const video = document.createElement("video");
+
+        video.src = item.url;
+        video.controls = true;
+        video.autoplay = true;
+        video.playsInline = true;
+        video.preload = "auto";
+
+        viewerContent.appendChild(video);
+
+    } else {
+
+        const img = document.createElement("img");
+
+        img.src = item.url;
+
+        viewerContent.appendChild(img);
+
+    }
+
+}
+
+document.getElementById("closeViewer").onclick = () => {
+    viewer.style.display = "none";
+};
+
+document.getElementById("nextButton").onclick = () => {
+
+    if (currentIndex < items.length - 1) {
+
+        currentIndex++;
+        renderViewer();
+
+    }
+
+};
+
+document.getElementById("prevButton").onclick = () => {
+
+    if (currentIndex > 0) {
+
+        currentIndex--;
+        renderViewer();
+
+    }
+
+};
+
+/* Swipe Handy */
+
+let startX = 0;
+
+viewer.addEventListener("touchstart", e => {
+    startX = e.touches[0].clientX;
+});
+
+viewer.addEventListener("touchend", e => {
+
+    const endX = e.changedTouches[0].clientX;
+
+    if (startX - endX > 50) {
+
+        if (currentIndex < items.length - 1) {
+
+            currentIndex++;
+            renderViewer();
+
+        }
+
+    }
+
+    if (endX - startX > 50) {
+
+        if (currentIndex > 0) {
+
+            currentIndex--;
+            renderViewer();
+
+        }
+
+    }
+
 });
 
 loadGallery();

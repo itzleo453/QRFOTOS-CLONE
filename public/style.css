@@ -272,3 +272,14 @@ max-width:1600px;
 margin:auto;
 }
 }
+
+#gallery video{
+    background:#000;
+    object-fit:cover;
+}
+
+#viewerContent video{
+    background:#000;
+    max-width:95%;
+    max-height:85vh;
+}
