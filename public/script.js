@@ -92,6 +92,7 @@ document.getElementById("uploadButton").onclick = async () => {
 
         if (xhr.status === 200) {
             uploadStatus.innerText = "Upload fertig ✅";
+            loadGallery();
             selectedInfo.innerText = "Keine Dateien ausgewählt";
             fileInput.value = "";
         } else {

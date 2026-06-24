@@ -74,16 +74,24 @@ app.get("/files", (req, res) => {
 
 app.post("/upload", upload.any(), (req, res) => {
 
-    console.log("FILES:", req.files);
-
     if (!req.files || req.files.length === 0) {
         return res.status(400).json({
             error: "Keine Datei angekommen"
         });
     }
 
+    const uploadedFiles = req.files.map(file => ({
+        name: file.filename,
+        time: Date.now(),
+        url: "/uploads/" + file.filename,
+        type: getFileType(file.filename)
+    }));
+
+    io.emit("files-added", uploadedFiles);
+
     res.json({
-        success: true
+        success: true,
+        files: uploadedFiles
     });
 
 });
