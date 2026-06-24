@@ -5,7 +5,6 @@ const io = require("socket.io")(http);
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
-const crypto = require("crypto");
 
 const PORT = process.env.PORT || 3000;
 const ADMIN_PASSWORD = "1234";
@@ -43,10 +42,6 @@ function getFileType(file) {
     return [".mp4", ".mov", ".webm"].includes(ext) ? "video" : "image";
 }
 
-function getHash(filePath) {
-    return crypto.createHash("sha256").update(fs.readFileSync(filePath)).digest("hex");
-}
-
 function getFilesSorted() {
     return fs.readdirSync("./uploads")
         .map(file => {
@@ -74,52 +69,26 @@ app.post("/upload", upload.any(), (req, res) => {
         return res.status(400).json({ error: "Keine Datei angekommen" });
     }
 
-    const existingHashes = new Set();
+    const uploadedFiles = req.files.map(file => ({
+        name: file.filename,
+        url: "/uploads/" + file.filename,
+        time: Date.now(),
+        type: getFileType(file.filename),
+        deleteToken: Math.random().toString(36).substring(2),
+        deleteUntil: Date.now() + DELETE_TIME_MS
+    }));
 
-    getFilesSorted().forEach(file => {
-        const p = "./uploads/" + file.name;
-        if (fs.existsSync(p)) {
-            existingHashes.add(getHash(p));
-        }
-    });
-
-    const uploadedFiles = [];
-    const skippedFiles = [];
-
-    req.files.forEach(file => {
-        const hash = getHash(file.path);
-
-        if (existingHashes.has(hash)) {
-            fs.unlinkSync(file.path);
-            skippedFiles.push(file.originalname);
-            return;
-        }
-
-        existingHashes.add(hash);
-
-        uploadedFiles.push({
-            name: file.filename,
-            url: "/uploads/" + file.filename,
-            time: Date.now(),
-            type: getFileType(file.filename),
-            deleteToken: crypto.randomBytes(24).toString("hex"),
-            deleteUntil: Date.now() + DELETE_TIME_MS
-        });
-    });
-
-    if (uploadedFiles.length > 0) {
-        io.emit("files-added", uploadedFiles.map(file => ({
-            name: file.name,
-            url: file.url,
-            time: file.time,
-            type: file.type
-        })));
-    }
+    io.emit("files-added", uploadedFiles.map(file => ({
+        name: file.name,
+        url: file.url,
+        time: file.time,
+        type: file.type
+    })));
 
     res.json({
         success: true,
         files: uploadedFiles,
-        skipped: skippedFiles
+        skipped: []
     });
 });
 
