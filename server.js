@@ -5,6 +5,7 @@ const io = require("socket.io")(http);
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const crypto = require("crypto");
 
 const PORT = process.env.PORT || 3000;
 const ADMIN_PASSWORD = "1234";
@@ -80,18 +81,43 @@ app.post("/upload", upload.any(), (req, res) => {
         });
     }
 
-    const uploadedFiles = req.files.map(file => ({
-        name: file.filename,
-        time: Date.now(),
-        url: "/uploads/" + file.filename,
-        type: getFileType(file.filename)
-    }));
+    const uploadedFiles = [];
+    const existingFiles = getFilesSorted();
+    const existingHashes = new Set();
 
-    io.emit("files-added", uploadedFiles);
+    existingFiles.forEach(file => {
+        const fullPath = "./uploads/" + file.name;
+        if (fs.existsSync(fullPath)) {
+            existingHashes.add(getFileHash(fullPath));
+        }
+    });
+
+    req.files.forEach(file => {
+        const newHash = getFileHash(file.path);
+
+        if (existingHashes.has(newHash)) {
+            fs.unlinkSync(file.path);
+            return;
+        }
+
+        existingHashes.add(newHash);
+
+        uploadedFiles.push({
+            name: file.filename,
+            time: Date.now(),
+            url: "/uploads/" + file.filename,
+            type: getFileType(file.filename)
+        });
+    });
+
+    if (uploadedFiles.length > 0) {
+        io.emit("files-added", uploadedFiles);
+    }
 
     res.json({
         success: true,
-        files: uploadedFiles
+        files: uploadedFiles,
+        skipped: req.files.length - uploadedFiles.length
     });
 
 });
@@ -128,3 +154,8 @@ io.on("connection", () => {
 http.listen(PORT, "0.0.0.0", () => {
     console.log("💍 Anton & Dimitra Hochzeit läuft auf Port " + PORT);
 });
+
+function getFileHash(filePath) {
+    const fileBuffer = fs.readFileSync(filePath);
+    return crypto.createHash("sha256").update(fileBuffer).digest("hex");
+}
